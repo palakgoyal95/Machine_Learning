@@ -39,6 +39,7 @@ plt.xlabel("Area")
 plt.ylabel("Price")
 plt.title("Actual vs Predicted Land Prices")
 plt.legend()
+plt.savefig("land_price_graph.png")
 plt.show()
 
 

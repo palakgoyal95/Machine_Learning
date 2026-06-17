@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestRegression
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import (
     mean_absolute_error,
     mean_squared_error,
@@ -127,7 +127,7 @@ model = Pipeline(
 
             "regressor",
 
-            RandomForestRegression(
+            RandomForestRegressor(
                     n_estimators=300,
 
                     random_state=42)
@@ -271,15 +271,8 @@ plt.figure(
 
 )
 
-plt.scatter(
-
-    y_test,
-
-    y_pred,
-
-    alpha=0.7
-
-)
+plt.scatter(y_test, y_pred, color="green", label="Predicted")
+plt.scatter(y_test, y_test, color="orange", label="Actual")
 
 
 # Perfect Prediction Line
@@ -314,5 +307,7 @@ plt.title(
     "Actual vs Predicted Prices"
 
 )
+plt.legend()
+plt.savefig("house_price_graph.png")
 
 plt.show()
