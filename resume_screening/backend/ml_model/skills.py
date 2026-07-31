@@ -1,4 +1,6 @@
-skills =[
+import re
+
+skills = [
     "Python",
     "Java",
     "C++",
@@ -19,37 +21,36 @@ skills =[
     "Scala",
     "Go",
     "TypeScript",
-    "postgreSQL",
+    "PostgreSQL",
     "MongoDB",
     "Redis",
     "AWS",
-    "Restful APIs",
+    "REST API",
     "Machine Learning",
     "Deep Learning",
     "Data Analysis",
     "Data Visualization",
     "Natural Language Processing",
-    "tensorFlow",
+    "TensorFlow",
     "PyTorch",
-    "pandas",
+    "Pandas",
     "NumPy",
-    "powerBI",
+    "Power BI",
     "Tableau",
-    "docker",
+    "Docker",
     "Kubernetes",
     "Git"
 ]
 
 def extract_skills(text):
-
     found_skills = []
 
     text = text.lower()
 
     for skill in skills:
+        pattern = r"\b" + re.escape(skill.lower()) + r"\b"
 
-        if skill.lower() in text:
-
+        if re.search(pattern, text):
             found_skills.append(skill)
 
     return found_skills

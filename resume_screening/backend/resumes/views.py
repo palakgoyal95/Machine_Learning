@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
-from ml_model.predict import extract_text_from_pdf, predict_resume 
+from backend.ml_model.predict import extract_text_from_pdf, predict_resume 
 from rest_framework.parsers import MultiPartParser, FormParser
 
 

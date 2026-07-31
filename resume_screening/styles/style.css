@@ -1,0 +1,249 @@
+/* -----------------------
+GENERAL
+------------------------*/
+
+#MainMenu{
+visibility:hidden;
+}
+
+footer{
+visibility:hidden;
+}
+
+header{
+visibility:hidden;
+}
+
+.stApp{
+
+background:linear-gradient(135deg,#0F172A,#1E293B);
+
+}
+
+/* -----------------------
+SIDEBAR
+------------------------*/
+
+section[data-testid="stSidebar"]{
+
+background:#111827;
+
+border-right:1px solid #374151;
+
+}
+
+/* Hide app title */
+
+[data-testid="stSidebarNav"] > div:first-child{
+
+display:none;
+
+}
+
+/* Sidebar links */
+
+[data-testid="stSidebarNav"] a{
+
+border-radius:15px;
+
+padding:12px;
+
+margin:6px;
+
+transition:.3s;
+
+font-weight:600;
+
+}
+
+/* Hover */
+
+[data-testid="stSidebarNav"] a:hover{
+
+background:#312E81;
+
+}
+
+/* Selected Page */
+
+[data-testid="stSidebarNav"] a[aria-current="page"]{
+
+background:linear-gradient(90deg,#7C3AED,#3B82F6);
+
+color:white;
+
+}
+
+/* -----------------------
+LOGO
+------------------------*/
+
+.sidebar-logo{
+
+text-align:center;
+
+padding:20px;
+
+}
+
+.sidebar-logo h1{
+
+color:#8B5CF6;
+
+font-size:38px;
+
+margin-bottom:5px;
+
+}
+
+.sidebar-logo p{
+
+color:#94A3B8;
+
+}
+
+/* -----------------------
+HERO
+------------------------*/
+
+.hero{
+
+background:linear-gradient(135deg,#7C3AED,#2563EB);
+
+padding:60px;
+
+border-radius:25px;
+
+text-align:center;
+
+box-shadow:0px 20px 50px rgba(124,58,237,.35);
+
+}
+
+.hero h1{
+
+font-size:65px;
+
+color:white;
+
+margin-bottom:15px;
+
+}
+
+.hero h3{
+
+color:white;
+
+font-size:32px;
+
+margin-bottom:15px;
+
+}
+
+.hero p{
+
+color:#E5E7EB;
+
+font-size:20px;
+
+}
+
+/* -----------------------
+FEATURE CARDS
+------------------------*/
+
+.feature-card{
+
+background:#1E293B;
+
+padding:30px;
+
+border-radius:20px;
+
+text-align:center;
+
+border:1px solid #334155;
+
+box-shadow:0px 10px 25px rgba(0,0,0,.35);
+
+height:220px;
+
+transition:.3s;
+
+}
+
+.feature-card:hover{
+
+transform:translateY(-8px);
+
+border:1px solid #8B5CF6;
+
+}
+
+.feature-card h2{
+
+font-size:55px;
+
+margin-bottom:10px;
+
+}
+
+.feature-card h4{
+
+color:white;
+
+font-size:24px;
+
+}
+
+.feature-card p{
+
+color:#CBD5E1;
+
+font-size:18px;
+
+}
+
+/* -----------------------
+BUTTONS
+------------------------*/
+
+.stButton button{
+
+background:linear-gradient(90deg,#7C3AED,#2563EB);
+
+color:white;
+
+border:none;
+
+border-radius:15px;
+
+height:50px;
+
+font-weight:bold;
+
+}
+
+.stButton button:hover{
+
+transform:scale(1.02);
+
+}
+
+/* -----------------------
+METRICS
+------------------------*/
+
+div[data-testid="stMetric"]{
+
+background:#1E293B;
+
+padding:20px;
+
+border-radius:20px;
+
+border-left:5px solid #8B5CF6;
+
+box-shadow:0px 10px 20px rgba(0,0,0,.35);
+
+}
