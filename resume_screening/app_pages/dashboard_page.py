@@ -14,11 +14,16 @@ def render():
     skills = st.session_state.get("skills", [])
     matches = result["top_matches"]
     confidence = result["confidence"]
+    ats = st.session_state.get("ats")
 
     metrics = st.columns(3)
     metrics[0].metric("Best-fit role", result["predicted_role"])
     metrics[1].metric("Match confidence", f"{confidence:.1f}%")
-    metrics[2].metric("ATS-style score", f"{min(100, round(confidence))}%")
+    metrics[2].metric(
+        "ATS score",
+        f"{ats['score']}%" if ats else "Not calculated",
+        help="Separate from model confidence; it uses job-description matching when a description is supplied.",
+    )
 
     left, right = st.columns([3, 2], gap="large")
     with left:
