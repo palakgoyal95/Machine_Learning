@@ -10,6 +10,8 @@ THEMES = {
         "line": "#DCE3F0",
         "sidebar": "#101B36",
         "sidebar_text": "#EAF0FF",
+        "button": "#2563EB",
+        "button_text": "#FFFFFF",
         "shadow": "0 12px 28px rgba(31, 58, 112, 0.08)",
     },
     "Dark": {
@@ -20,6 +22,8 @@ THEMES = {
         "line": "#263653",
         "sidebar": "#080E1B",
         "sidebar_text": "#EAF0FF",
+        "button": "#60A5FA",
+        "button_text": "#0B1220",
         "shadow": "0 14px 30px rgba(0, 0, 0, 0.26)",
     },
 }
@@ -57,6 +61,14 @@ def apply_theme(mode: str) -> None:
         }}
         [data-testid="stCaptionContainer"], .stCaption {{ color: {palette['muted']}; }}
         [data-testid="stFileUploader"] {{ background: {palette['surface']}; border-radius: 14px; }}
+        [data-testid="stFileUploader"] button,
+        [data-testid="stDownloadButton"] button {{
+            background: {palette['button']};
+            border-color: {palette['button']};
+            color: {palette['button_text']};
+        }}
+        [data-testid="stFileUploader"] button *,
+        [data-testid="stDownloadButton"] button * {{ color: {palette['button_text']}; }}
         [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea {{
             background: {palette['surface']}; color: {palette['text']};
         }}
