@@ -1,4 +1,9 @@
+from pathlib import Path
+
 import streamlit as st
+
+
+HERO_IMAGE = Path(__file__).resolve().parents[1] / "assests" / "resumeai-hero.png"
 
 
 def _go_to_screening():
@@ -22,7 +27,11 @@ def render():
         )
         st.caption("PDF in. Useful signal out. No complicated setup.")
     with visual:
-        st.image("assests/resumeai-hero.png", caption="A clearer view of every candidate", width="stretch")
+        try:
+            st.image(HERO_IMAGE, caption="A clearer view of every candidate", width="stretch")
+        except Exception:
+            # A media-serving error should not prevent the main application from loading.
+            st.info("Resume screening is ready when you are.", icon=":material/auto_awesome:")
 
     st.space("small")
     left, right = st.columns(2, gap="medium")
