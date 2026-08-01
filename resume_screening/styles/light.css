@@ -1,0 +1,34 @@
+/* Light theme */
+
+#MainMenu{ visibility: hidden; }
+footer{ visibility: hidden; }
+header{ visibility: hidden; }
+
+.stApp{ background: #FFFFFF; color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+
+section[data-testid="stSidebar"]{ background: #F7FAFC; border-right: 1px solid rgba(2,6,23,0.05);
+	position: fixed !important; left:0 !important; top:0 !important; height:100vh !important; width:300px !important; transform:none !important; display:block !important; z-index:9999 !important; overflow:auto !important; }
+div[data-testid="stAppViewContainer"]{ margin-left:320px !important; }
+
+@media (max-width: 900px){
+	section[data-testid="stSidebar"]{ position: relative !important; width:100% !important; height:auto !important; }
+	div[data-testid="stAppViewContainer"]{ margin-left:0 !important; }
+}
+
+[data-testid="stSidebarNav"] > div:first-child{ display:none; }
+
+[data-testid="stSidebarNav"] a{ color:#0b2540; }
+[data-testid="stSidebarNav"] a[aria-current="page"]{ background: linear-gradient(90deg,#06b6d4,#0ea5a4); color:#042027; }
+
+.sidebar-logo h1{ color:#0ea5a4; }
+.sidebar-logo p{ color:#475569; }
+
+.hero{ background: #F0FAFB; padding:18px; border-radius:10px; }
+.hero h1{ color:#042027 }
+.hero p{ color:#475569 }
+
+.feature-card{ background:#FFFFFF; border:1px solid rgba(2,6,23,0.04); }
+
+.stButton button{ background: linear-gradient(90deg,#06b6d4,#0ea5a4); color:#042027 }
+
+div[data-testid="stMetric"]{ background:#FFFFFF; color:#042027; border-left:5px solid #06b6d4 }

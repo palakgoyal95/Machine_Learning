@@ -1,6 +1,47 @@
 [theme]
-primaryColor="#8B5CF6"
-backgroundColor="#0F172A"
-secondaryBackgroundColor="#1E293B"
-textColor="#F8FAFC"
-font="sans serif"
+base = "light"
+primaryColor = "#2563EB"
+backgroundColor = "#F8FAFC"
+secondaryBackgroundColor = "#EEF2FF"
+textColor = "#172033"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap"
+baseFontSize = 15
+baseRadius = "large"
+buttonRadius = "medium"
+borderColor = "#DCE3F0"
+showWidgetBorder = true
+showSidebarBorder = false
+linkUnderline = false
+blueColor = "#2563EB"
+greenColor = "#059669"
+orangeColor = "#D97706"
+redColor = "#DC2626"
+violetColor = "#7C3AED"
+grayColor = "#64748B"
+chartCategoricalColors = ["#2563EB", "#06B6D4", "#7C3AED", "#059669", "#D97706", "#E11D48"]
+
+[theme.sidebar]
+backgroundColor = "#111C36"
+secondaryBackgroundColor = "#1D2A4A"
+textColor = "#EEF4FF"
+primaryColor = "#60A5FA"
+borderColor = "#243554"
+
+[theme.light]
+primaryColor = "#2563EB"
+backgroundColor = "#F8FAFC"
+secondaryBackgroundColor = "#EEF2FF"
+textColor = "#172033"
+
+[theme.dark]
+primaryColor = "#60A5FA"
+backgroundColor = "#0F172A"
+secondaryBackgroundColor = "#17233B"
+textColor = "#E8EEF9"
+
+[theme.dark.sidebar]
+backgroundColor = "#0A1020"
+secondaryBackgroundColor = "#16223A"
+textColor = "#E8EEF9"
+primaryColor = "#7DD3FC"

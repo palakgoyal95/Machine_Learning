@@ -1,83 +1,40 @@
-from streamlit_option_menu import option_menu
 import streamlit as st
 
 
 def show_sidebar():
+    """Render app-level navigation and lightweight context."""
     with st.sidebar:
+        st.title(":material/auto_awesome: ResumeAI")
+        st.caption("Clearer hiring decisions, one resume at a time.")
 
-        st.markdown("""
-        <div style="
-        text-align:center;
-        padding:20px;
-        ">
-            <h1 style="color:#8B5CF6;margin-bottom:5px;">
-                🤖 ResumeAI
-            </h1>
-
-            <p style="color:#94A3B8;">
-                AI Resume Screening
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        selected = option_menu(
-            menu_title=None,
-
-            options=[
-                "Home",
-                "Resume Screening",
-                "Dashboard",
-                "About"
-            ],
-
-            icons=[
-                "house-fill",
-                "file-earmark-arrow-up-fill",
-                "bar-chart-fill",
-                "info-circle-fill"
-            ],
-
-            menu_icon="cast",
-
-            default_index=0,
-
-            styles={
-
-                "container": {
-                    "padding": "5px",
-                    "background-color": "#1E293B",
-                    "border-radius": "15px",
-                },
-
-                "icon": {
-                    "color": "#8B5CF6",
-                    "font-size": "20px",
-                },
-
-                "nav-link": {
-                    "font-size": "18px",
-                    "text-align": "left",
-                    "margin": "8px",
-                    "padding": "12px",
-                    "border-radius": "10px",
-                    "--hover-color": "#334155",
-                    "color": "white",
-                },
-
-                "nav-link-selected": {
-                    "background-color": "#7C3AED",
-                    "color": "white",
-                },
-            },
+        selected = st.radio(
+            "Navigate",
+            options=["Home", "Screen resume", "Insights", "About"],
+            format_func=lambda page: {
+                "Home": ":material/home: Home",
+                "Screen resume": ":material/upload_file: Screen resume",
+                "Insights": ":material/insights: Insights",
+                "About": ":material/info: About",
+            }[page],
+            label_visibility="collapsed",
+            key="navigation",
         )
 
-        st.markdown("---")
-
-        st.markdown(
-            "<p style='text-align:center;color:gray;'>ResumeAI v2.0</p>",
-            unsafe_allow_html=True,
+        st.space("medium")
+        st.caption("APPEARANCE")
+        st.radio(
+            "Color mode",
+            options=["Light", "Dark"],
+            horizontal=True,
+            label_visibility="collapsed",
+            key="color_mode",
+            format_func=lambda mode: f":material/{'light_mode' if mode == 'Light' else 'dark_mode'}: {mode}",
         )
 
-        return selected
+        st.space("medium")
+        st.caption("HOW IT WORKS")
+        st.write("Upload a PDF, review the match, then explore skills and recommendations.")
+        st.space("small")
+        st.caption("ResumeAI · v2.0")
+
+    return selected

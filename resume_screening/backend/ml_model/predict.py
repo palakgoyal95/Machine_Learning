@@ -1,16 +1,23 @@
-import PyPDF2
-import pickle
+"""Model loading and resume prediction helpers.
+
+Provides `predict_resume(text)` which returns the predicted role, a
+confidence score (percentage), and the top matches. The implementation
+is robust to classifiers that expose either `predict_proba` or
+`decision_function`.
+"""
+
 from pathlib import Path
-
-
-from pathlib import Path
 import pickle
+import re
+import math
 
 import PyPDF2
+import numpy as np
+from .skills import extract_skills
 
 try:
     import joblib
-except ImportError:  # pragma: no cover - joblib usually ships with sklearn
+except Exception:
     joblib = None
 
 
@@ -18,6 +25,11 @@ MODEL_DIR = Path(__file__).resolve().parent
 
 
 def _load_artifact(*filenames):
+    """Try to load the first existing artifact from `filenames`.
+
+    Supports `.joblib` via joblib when available, otherwise falls back
+    to pickle.
+    """
     for filename in filenames:
         artifact_path = MODEL_DIR / filename
         if not artifact_path.exists():
@@ -26,39 +38,55 @@ def _load_artifact(*filenames):
         if artifact_path.suffix == '.joblib' and joblib is not None:
             return joblib.load(artifact_path)
 
-        with artifact_path.open('rb') as artifact_file:
-            return pickle.load(artifact_file)
+        with artifact_path.open('rb') as f:
+            return pickle.load(f)
 
-    raise FileNotFoundError(f'Could not find any of: {", ".join(filenames)}')
+    raise FileNotFoundError(f"Could not find any of: {', '.join(filenames)}")
 
 
 def extract_text_from_pdf(pdf_file):
-
+    """Extract text from a PDF file path or file-like object."""
     text_parts = []
-
     reader = PyPDF2.PdfReader(pdf_file)
-
     for page in reader.pages:
-
         page_text = page.extract_text() or ""
         if page_text:
             text_parts.append(page_text)
-
     return "\n".join(text_parts).strip()
 
 
-model = _load_artifact('model.joblib', 'model.pkl', 'model.pk1')
-vectorizer = _load_artifact('vectorizer.joblib', 'vectorizer.pkl', 'vectorizer.pk1')
+model = _load_artifact('model.joblib', 'model.pkl', 'model.pickle')
+vectorizer = _load_artifact('vectorizer.joblib', 'vectorizer.pkl', 'vectorizer.pickle')
 
 
 def _to_float(value):
     return float(value)
 
 
-# Function to predict suitability
-def predict_resume(text):
+def _softmax(arr):
+    e = np.exp(arr - np.max(arr))
+    return e / e.sum()
 
-    text = (text or "").strip()
+
+def _preprocess_text(text: str) -> str:
+    """Basic text normalization used before vectorization.
+
+    Keeps changes minimal (collapse whitespace, strip) so it is unlikely
+    to diverge from the original training preprocessing.
+    """
+    if not text:
+        return ""
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
+
+
+def predict_resume(text: str):
+    """Predict the most likely role for the provided resume text.
+
+    Returns a dict with keys: `predicted_role`, `confidence` (percentage),
+    and `top_matches` (list of top 3 roles with confidences).
+    """
+    text = _preprocess_text(text or "")
 
     if not text:
         return {
@@ -69,72 +97,49 @@ def predict_resume(text):
 
     text_vector = vectorizer.transform([text])
 
+    # safe predict
     prediction = model.predict(text_vector)[0]
 
-    probabilities = model.predict_proba(text_vector)[0]
+    probabilities = None
+    if hasattr(model, 'predict_proba'):
+        try:
+            probabilities = model.predict_proba(text_vector)[0]
+        except Exception:
+            probabilities = None
 
+    if probabilities is None and hasattr(model, 'decision_function'):
+        try:
+            scores = model.decision_function(text_vector)
+            # decision_function may return shape (n_classes,) or (1, n_classes)
+            scores = np.ravel(scores)
+            probabilities = _softmax(scores)
+        except Exception:
+            probabilities = None
 
-    classes = model.classes_
-
-
+    classes = getattr(model, 'classes_', None)
 
     result = []
 
-    for role, score in zip(
+    if probabilities is None or classes is None:
+        # Fallback: no probabilities available — return prediction alone
+        return {
+            "predicted_role": str(prediction),
+            "confidence": 100.0,
+            "top_matches": [{"role": str(prediction), "confidence": 100.0}],
+        }
 
-        classes,
+    for role, score in zip(classes, probabilities):
+        result.append({
+            "role": str(role),
+            "confidence": round(_to_float(score) * 100, 2),
+        })
 
-        probabilities
-
-    ):
-
-        result.append(
-
-            {
-
-                "role": str(role),
-
-                "confidence":
-
-                round(
-
-                    _to_float(score) * 100,
-
-                    2
-
-                )
-
-            }
-
-        )
-
-
-    result = sorted(
-
-        result,
-
-        key=lambda x:x["confidence"],
-
-        reverse=True
-
-    )
-
+    result = sorted(result, key=lambda x: x["confidence"], reverse=True)
 
     return {
-
-        "predicted_role":
-
-        str(prediction),
-
-
-        "confidence":
-
-        _to_float(result[0]["confidence"]),
-
-
-        "top_matches":
-
-        result[:3]
-
+        "predicted_role": str(prediction),
+        "confidence": _to_float(result[0]["confidence"]),
+        "top_matches": result[:3],
+        "skills": extract_skills(text),
     }
 
