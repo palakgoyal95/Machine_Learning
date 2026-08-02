@@ -2,7 +2,7 @@ import time
 
 import streamlit as st
 
-from backend.ml_model.predict import extract_text_from_pdf, predict_resume
+from backend.ml_model.predict import assess_resume_document, extract_text_from_pdf, predict_resume
 from backend.ml_model.skills import extract_skills
 from backend.ml_model.ats import calculate_ats_score
 
@@ -31,10 +31,26 @@ def render():
 
     with st.spinner("Reading the resume and finding the best matches…"):
         time.sleep(2)
-        text = extract_text_from_pdf(uploaded_file)
-        result = predict_resume(text)
-        skills = extract_skills(text)
-        ats = calculate_ats_score(text, job_description)
+        try:
+            text = extract_text_from_pdf(uploaded_file)
+        except Exception:
+            st.error(
+                "We could not read this PDF. Please upload a valid, text-based resume PDF.",
+                icon=":material/picture_as_pdf:",
+            )
+            return
+
+    document_check = assess_resume_document(text)
+    if not document_check["is_resume"]:
+        st.warning(document_check["message"], icon=":material/description:")
+        if document_check["signals"]:
+            st.caption(f"Resume signals found: {', '.join(document_check['signals'])}.")
+        st.caption("No role, confidence, or ATS score was calculated for this file.")
+        return
+
+    result = predict_resume(text)
+    skills = extract_skills(text)
+    ats = calculate_ats_score(text, job_description)
 
     st.session_state["prediction"] = result
     st.session_state["resume_text"] = text
@@ -54,6 +70,20 @@ def render():
         f"{ats_score}%",
         help="A transparent resume-readiness and job-description match score. It is separate from model confidence.",
     )
+
+    with st.expander("How role and confidence are detected", icon=":material/psychology:"):
+        st.write(
+            "The role is selected by a machine-learning classifier trained on labeled resume text. "
+            "It compares the words and phrases in this resume with patterns learned for each role."
+        )
+        st.write(
+            "Match confidence is the classifier's estimated probability for the selected role, shown alongside the next two most likely roles below. "
+            "It reflects similarity to the training data, not candidate quality, eligibility, or a hiring decision."
+        )
+        st.caption(
+            "The document check uses readable text, common resume sections, contact details, recognised professional skills, "
+            "and employment or education wording. It does not use protected characteristics."
+        )
 
     with st.expander("How the ATS score is calculated", icon=":material/info:"):
         if ats["has_job_description"]:

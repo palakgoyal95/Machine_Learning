@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
-from backend.ml_model.predict import extract_text_from_pdf, predict_resume 
+from backend.ml_model.predict import assess_resume_document, extract_text_from_pdf, predict_resume
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
@@ -17,6 +17,10 @@ def upload_resume(request):
 
         if not text:
             return Response({"error": "No readable text was found in the uploaded PDF."}, status=400)
+
+        document_check = assess_resume_document(text)
+        if not document_check["is_resume"]:
+            return Response({"error": document_check["message"]}, status=400)
 
         prediction = predict_resume(text)
         return Response({"message": "Resume uploaded successfully.", "prediction": prediction}, status=200)

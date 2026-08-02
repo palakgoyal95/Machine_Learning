@@ -23,6 +23,14 @@ except Exception:
 
 MODEL_DIR = Path(__file__).resolve().parent
 
+# These are intentionally broad: a resume can use many different layouts and
+# headings. The check guards against analysing invoices, articles, or other
+# PDFs as though they were candidate resumes; it is not a validity score.
+RESUME_SECTION_MARKERS = (
+    "experience", "work history", "employment", "education", "skills",
+    "projects", "certifications", "professional summary", "profile",
+)
+
 
 def _load_artifact(*filenames):
     """Try to load the first existing artifact from `filenames`.
@@ -78,6 +86,42 @@ def _preprocess_text(text: str) -> str:
         return ""
     text = re.sub(r"\s+", " ", text)
     return text.strip()
+
+
+def assess_resume_document(text: str) -> dict[str, object]:
+    """Check whether extracted PDF text has common resume signals.
+
+    A document is accepted when it contains readable text plus at least two
+    independent resume signals. The check never uses protected characteristics.
+    """
+    normalized = _preprocess_text(text).casefold()
+    word_count = len(re.findall(r"[a-z][a-z0-9+#./-]*", normalized))
+    if word_count < 40:
+        return {
+            "is_resume": False,
+            "message": "This PDF has too little readable text to verify that it is a resume. Please upload a text-based resume PDF.",
+            "signals": [],
+        }
+
+    signals = []
+    if any(marker in normalized for marker in RESUME_SECTION_MARKERS):
+        signals.append("standard resume sections")
+    if re.search(r"[\w.+-]+@[\w-]+\.[\w.-]+", text) or re.search(
+        r"(?:linkedin\.com|github\.com|\+?\d[\d\s().-]{7,}\d)", normalized
+    ):
+        signals.append("contact details")
+    if extract_skills(text):
+        signals.append("recognised professional skills")
+    if re.search(r"\b(?:worked|employment|employed|intern|university|college|bachelor|master|degree)\b", normalized):
+        signals.append("employment or education information")
+
+    if len(signals) < 2:
+        return {
+            "is_resume": False,
+            "message": "This PDF does not look like a resume. Please upload a resume containing details such as experience, education, skills, or contact information.",
+            "signals": signals,
+        }
+    return {"is_resume": True, "message": "", "signals": signals}
 
 
 def predict_resume(text: str):
