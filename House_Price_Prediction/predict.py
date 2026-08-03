@@ -99,3 +99,4 @@ print(
     f"{prediction[0]:,.2f}"
 
 )
+print("successful")
